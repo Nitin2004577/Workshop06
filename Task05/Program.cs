@@ -2,40 +2,144 @@
 using System.Collections.Generic;
 using System.Linq;
 
-class Booking
+public class Program
 {
-    public string CustomerName { get; set; }
-    public string Destination { get; set; }
-    public double Price { get; set; }
-    public int DurationInDay { get; set; }
-    public bool IsInternational { get; set; }
-}
-
-class Program
-{
-    static void Main(string[] args)
+    public static void Main()
     {
-        // Sample List of Bookings
-        List<Booking> bookings = new List<Booking>()
+        // ===========================================
+        // 1. AGGREGATION OPERATORS
+        // ===========================================
+
+        List<CashierSales> cashierSales = new List<CashierSales>
         {
-            new Booking { CustomerName = "Nitin", Destination = "Pokhara", Price = 12000, DurationInDay = 5, IsInternational = false },
-            new Booking { CustomerName = "Sam", Destination = "Thailand", Price = 45000, DurationInDay = 7, IsInternational = true },
-            new Booking { CustomerName = "Rita", Destination = "Chitwan", Price = 8000, DurationInDay = 3, IsInternational = false },
-            new Booking { CustomerName = "Aarav", Destination = "Dubai", Price = 65000, DurationInDay = 4, IsInternational = true }
+            new CashierSales("Cashier A", 12000),
+            new CashierSales("Cashier B", 15000),
+            new CashierSales("Cashier C", 9000),
+            new CashierSales("Cashier D", 18000)
         };
 
-        // LINQ Filter: Price above 10,000 AND Duration more than 4 days
-        var filteredTours = bookings
-            .Where(b => b.Price > 10000 && b.DurationInDay > 4)
-            .ToList();
+        // Total number of cashiers
+        int totalCashiers = cashierSales.Count();
 
-        // Print Summary Report
-        Console.WriteLine("Summary Report:");
-        foreach (var tour in filteredTours)
+        // Total sales of the day
+        double totalSales = cashierSales.Sum(s => s.SalesAmount);
+
+        // Highest sale
+        double highestSale = cashierSales.Max(s => s.SalesAmount);
+
+        // Lowest sale
+        double lowestSale = cashierSales.Min(s => s.SalesAmount);
+
+        // Average sale
+        double averageSale = cashierSales.Average(s => s.SalesAmount);
+
+        Console.WriteLine("=== Aggregation Results ===");
+        Console.WriteLine($"Total Cashiers: {totalCashiers}");
+        Console.WriteLine($"Total Sales: Rs. {totalSales}");
+        Console.WriteLine($"Highest Sale: Rs. {highestSale}");
+        Console.WriteLine($"Lowest Sale: Rs. {lowestSale}");
+        Console.WriteLine($"Average Sale: Rs. {averageSale}");
+
+
+        // ===========================================
+        // 2. QUANTIFIER OPERATORS (Any / All)
+        // ===========================================
+
+        List<Applicant> applicants = new List<Applicant>
         {
-            Console.WriteLine($"Customer: {tour.CustomerName}, Destination: {tour.Destination}, " +
-                              $"Price: Rs.{tour.Price}, Duration: {tour.DurationInDay} days, " +
-                              $"International: {tour.IsInternational}");
-        }
+            new Applicant("Ram", 17),
+            new Applicant("Sita", 22),
+            new Applicant("Hari", 19),
+            new Applicant("Bishal", 16)
+        };
+
+        // Any applicant under 18?
+        bool anyUnder18 = applicants.Any(a => a.Age < 18);
+
+        // Check if ALL applicants are above 16
+        bool allAbove16 = applicants.All(a => a.Age > 16);
+
+        Console.WriteLine("\n=== Quantifier Results ===");
+        Console.WriteLine($"Any Applicant Under 18: {anyUnder18}");
+        Console.WriteLine($"All Applicants Above 16: {allAbove16}");
+
+
+        // ===========================================
+        // 3. ELEMENT OPERATORS (First, Last, FirstOrDefault)
+        // ===========================================
+
+        List<Song> songs = new List<Song>
+        {
+            new Song("Song A", 210),   // 3.5 min
+            new Song("Song B", 300),   // 5 min
+            new Song("Song C", 180),   // 3 min
+            new Song("Song D", 450)    // 7.5 min
+        };
+
+        // First song
+        var firstSong = songs.First();
+
+        // Last song
+        var lastSong = songs.Last();
+
+        // First song with duration above 4 minutes (240 sec)
+        var firstAbove4Min = songs.First(s => s.Duration > 240);
+
+        // Safe result for song longer than 10 minutes (600 sec)
+        var longerThan10 = songs.FirstOrDefault(s => s.Duration > 600);
+
+        Console.WriteLine("\n=== Element Operator Results ===");
+        Console.WriteLine($"First Song: {firstSong.Title}");
+        Console.WriteLine($"Last Song: {lastSong.Title}");
+        Console.WriteLine($"First Song > 4 mins: {firstAbove4Min.Title}");
+
+        if (longerThan10 == null)
+            Console.WriteLine("No song longer than 10 minutes found.");
+        else
+            Console.WriteLine($"Song Longer than 10 mins: {longerThan10.Title}");
+    }
+}
+
+
+// ===========================================
+// Supporting Classes
+// ===========================================
+
+// CashierSales for aggregation
+public class CashierSales
+{
+    public string CashierName { get; set; }
+    public double SalesAmount { get; set; }
+
+    public CashierSales(string name, double sales)
+    {
+        CashierName = name;
+        SalesAmount = sales;
+    }
+}
+
+// Applicant for Any/All
+public class Applicant
+{
+    public string Name { get; set; }
+    public int Age { get; set; }
+
+    public Applicant(string name, int age)
+    {
+        Name = name;
+        Age = age;
+    }
+}
+
+// Song for element operators
+public class Song
+{
+    public string Title { get; set; }
+    public int Duration { get; set; }  // In seconds
+
+    public Song(string title, int duration)
+    {
+        Title = title;
+        Duration = duration;
     }
 }
